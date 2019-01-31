@@ -45,8 +45,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 
 import javafx.collections.FXCollections;
@@ -115,6 +117,8 @@ public final class Preferences implements PersistedDataHost, BridgeAddressProvid
     @Getter
     private final BooleanProperty useAnimationsProperty = new SimpleBooleanProperty(prefPayload.isUseAnimations());
     @Getter
+    private final IntegerProperty uiThemeIdProperty = new SimpleIntegerProperty(prefPayload.getUiThemeId());
+    @Getter
     private final BooleanProperty useCustomWithdrawalTxFeeProperty = new SimpleBooleanProperty(prefPayload.isUseCustomWithdrawalTxFee());
     @Getter
     private final LongProperty withdrawalTxFeeInBytesProperty = new SimpleLongProperty(prefPayload.getWithdrawalTxFeeInBytes());
@@ -161,6 +165,11 @@ public final class Preferences implements PersistedDataHost, BridgeAddressProvid
         useAnimationsProperty.addListener((ov) -> {
             prefPayload.setUseAnimations(useAnimationsProperty.get());
             GlobalSettings.setUseAnimations(prefPayload.isUseAnimations());
+            persist();
+        });
+
+        uiThemeIdProperty.addListener((ov) -> {
+            prefPayload.setUiThemeId(uiThemeIdProperty.get());
             persist();
         });
 
@@ -247,6 +256,7 @@ public final class Preferences implements PersistedDataHost, BridgeAddressProvid
 
         // set all properties
         useAnimationsProperty.set(prefPayload.isUseAnimations());
+        uiThemeIdProperty.set(prefPayload.getUiThemeId());
         useStandbyModeProperty.set(prefPayload.isUseStandbyMode());
         useCustomWithdrawalTxFeeProperty.set(prefPayload.isUseCustomWithdrawalTxFee());
         withdrawalTxFeeInBytesProperty.set(prefPayload.getWithdrawalTxFeeInBytes());
@@ -319,6 +329,10 @@ public final class Preferences implements PersistedDataHost, BridgeAddressProvid
 
     public void setUseAnimations(boolean useAnimations) {
         this.useAnimationsProperty.set(useAnimations);
+    }
+
+    public void setThemeId(int themeId) {
+        this.uiThemeIdProperty.set(themeId);
     }
 
     public void addFiatCurrency(FiatCurrency tradeCurrency) {
@@ -719,6 +733,8 @@ public final class Preferences implements PersistedDataHost, BridgeAddressProvid
         void setTacAccepted(boolean tacAccepted);
 
         void setUseAnimations(boolean useAnimations);
+
+        void setThemeId(int themeId);
 
         void setUserLanguage(@NotNull String userLanguageCode);
 

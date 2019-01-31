@@ -1292,6 +1292,7 @@ message PreferencesPayload {
     string rpc_user = 47;
     string rpc_pw = 48;
     string take_offer_selected_payment_account_id = 49;
+    int32 ui_theme = 50;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -1756,6 +1757,12 @@ message Country {
 message Region {
     string code = 1;
     string name = 2;
+}
+
+message UITheme {
+    string id = 1;
+    string label = 2;
+    bool darkMode = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

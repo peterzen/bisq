@@ -30,6 +30,7 @@ import bisq.desktop.main.overlays.windows.ManualPayoutTxWindow;
 import bisq.desktop.main.overlays.windows.SendAlertMessageWindow;
 import bisq.desktop.main.overlays.windows.ShowWalletDataWindow;
 import bisq.desktop.util.ImageUtil;
+import bisq.desktop.util.UITheme;
 
 import bisq.core.alert.AlertManager;
 import bisq.core.app.AppOptionKeys;
@@ -75,6 +76,9 @@ import javafx.scene.layout.StackPane;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -219,11 +223,14 @@ public class BisqApp extends Application implements UncaughtExceptionHandler {
                 maxWindowBounds.height < INITIAL_WINDOW_HEIGHT ?
                         (maxWindowBounds.height < MIN_WINDOW_HEIGHT ? MIN_WINDOW_HEIGHT : maxWindowBounds.height) :
                         INITIAL_WINDOW_HEIGHT);
-        scene.getStylesheets().setAll(
-                "/bisq/desktop/bisq.css",
-                "/bisq/desktop/images.css",
-                "/bisq/desktop/CandleStickChart.css");
+
         addSceneKeyEventHandler(scene, injector);
+
+        loadSceneStyles(scene, injector);
+        injector.getInstance(Preferences.class).getUiThemeIdProperty().addListener((ov) -> {
+            loadSceneStyles(scene, injector);
+        });
+
         return scene;
     }
 
@@ -313,10 +320,37 @@ public class BisqApp extends Application implements UncaughtExceptionHandler {
                         showFPSWindow(scene);
                     } else if (Utilities.isAltOrCtrlPressed(KeyCode.Z, keyEvent)) {
                         showDebugWindow(scene, injector);
+                    } else if (Utilities.isAltOrCtrlPressed(KeyCode.D, keyEvent)) {
+                        cycleUIThemes(scene, injector);
                     }
                 }
             }
         });
+    }
+
+    private void cycleUIThemes(Scene scene, Injector injector) {
+        List<UITheme> uiThemeList = Arrays.asList(UITheme.values());
+        uiThemeList = new ArrayList<>(uiThemeList);
+        int currentThemeId = injector.getInstance(Preferences.class).getUiThemeId();
+        if (currentThemeId < (uiThemeList.size() - 1)) {
+            currentThemeId += 1;
+        } else {
+            currentThemeId = 0;
+        }
+        injector.getInstance(Preferences.class).setThemeId(currentThemeId);
+        loadSceneStyles(scene, injector);
+    }
+
+    private void loadSceneStyles(Scene scene, Injector injector) {
+        List<UITheme> uiThemeList = Arrays.asList(UITheme.values());
+        uiThemeList = new ArrayList<>(uiThemeList);
+        int themeId = injector.getInstance(Preferences.class).getUiThemeId();
+        String cssPath = "/bisq/desktop/styles/";
+        String themeCss = uiThemeList.get(themeId).getCssName() + ".css";
+        scene.getStylesheets().setAll(
+                cssPath + themeCss,
+                cssPath + "bisq.css"
+        );
     }
 
     private void shutDownByUser() {

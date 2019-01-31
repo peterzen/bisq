@@ -31,3 +31,4 @@ deploy
 */releases/*
 /monitor/TorHiddenServiceStartupTimeTests/*
 /monitor/monitor-tor/*
+/desktop/.sass-cache/*
