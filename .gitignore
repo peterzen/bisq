@@ -31,3 +31,5 @@ deploy
 */releases/*
 /monitor/TorHiddenServiceStartupTimeTests/*
 /monitor/monitor-tor/*
+/desktop/.sass-cache/*
+/desktop/src/main/java/bisq/desktop/styles/*
